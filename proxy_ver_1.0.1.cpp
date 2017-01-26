@@ -1,35 +1,36 @@
 //Version_1.0.1
 //Li Chenghao
 //Li Kunlin
+//Be noticed: chinese comments may not display correctly in some code editors.
 #include <stdio.h>
 #include <string.h>
 #include <winsock2.h>
 #include <windows.h>
-#pragma comment (lib, "ws2_32.lib")  //¼ÓÔØ ws2_32.dll
+#pragma comment (lib, "ws2_32.lib")  //ï¿½ï¿½ï¿½ï¿½ ws2_32.dll
 
-#define PROXYPORT 8471//´úÀí·þÎñÆ÷µÄ¶Ë¿Ú 
-#define WEBPORT 80//HTTP¶Ë¿Ú
-#define BUFFSIZE 5000//»º´æÇø´óÐ¡ 
+#define PROXYPORT 8471//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¶Ë¿ï¿½ 
+#define WEBPORT 80//HTTPï¿½Ë¿ï¿½
+#define BUFFSIZE 5000//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ 
 
-//È«¾Ö±äÁ¿
-int nByte;//×Ö½ÚÊý
-char localData[BUFFSIZE];//ÇëÇó±¨ÎÄ»º´æÇø
-char serverData[BUFFSIZE];//·µ»Ø±¨ÎÄ»º´æÇø
-char domin[256];//ÓòÃû»º´æ 
-char ip[256];//IP»º´æ 
-char blacklist[256];//ºÚÃûµ¥ 
-char blockPage[200] = "HTTP/1.1 403 Forbidden\nContent-Type: text/html\nContent-Length: 500\n\n<html><head><title>Naive!</title></head><body><h1>403</h1><h2>Forbidden</h2></body></html>";//403Êý¾Ý
+//È«ï¿½Ö±ï¿½ï¿½ï¿½
+int nByte;//ï¿½Ö½ï¿½ï¿½ï¿½
+char localData[BUFFSIZE];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½
+char serverData[BUFFSIZE];//ï¿½ï¿½ï¿½Ø±ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½
+char domin[256];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+char ip[256];//IPï¿½ï¿½ï¿½ï¿½ 
+char blacklist[256];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+char blockPage[200] = "HTTP/1.1 403 Forbidden\nContent-Type: text/html\nContent-Length: 500\n\n<html><head><title>Naive!</title></head><body><h1>403</h1><h2>Forbidden</h2></body></html>";//403ï¿½ï¿½ï¿½ï¿½
 
-void ShowClientInfo(char *dataSend)//ÏÔÊ¾¿Í»§¶ËÐÅÏ¢ 
+void ShowClientInfo(char *dataSend)//ï¿½ï¿½Ê¾ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ 
 {
 	//------------------------------------------------
-	//--------------·ÖÎöÇëÇó±¨ÎÄ¶ÎµÄÐÅÏ¢--------------
+	//--------------ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¶Îµï¿½ï¿½ï¿½Ï¢--------------
 	//------------------------------------------------
 	
-	//********×¥ÓòÃû»òÕßIP************
+	//********×¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IP************
 	int i,j;
-	memset(domin , 0 , sizeof(domin));//Çå¿ÕÓòÃû»º´æ
-	memset(domin , 0 , sizeof(ip));//Çå¿ÕIP»º´æ 
+	memset(domin , 0 , sizeof(domin));//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	memset(domin , 0 , sizeof(ip));//ï¿½ï¿½ï¿½ï¿½IPï¿½ï¿½ï¿½ï¿½ 
 	 
 	for(i = 0 ; i < strlen(dataSend); i++)
 	{
@@ -37,15 +38,15 @@ void ShowClientInfo(char *dataSend)//ÏÔÊ¾¿Í»§¶ËÐÅÏ¢
 		{
 			for(j = 0 , i = i + 6 ; dataSend[i + 1] != '\n' ; i++ , j++)
 				domin[j] = dataSend[i];
-			printf("·þÎñÆ÷µÄÓòÃûÊÇ£º%s\n" , domin);
+			printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç£ï¿½%s\n" , domin);
 			break;
 		}
 	}
 
 	if(i == strlen(dataSend))
-		printf("±¨ÎÄÖÐÃ»ÓÐ·þÎñÆ÷ÓòÃû»òÕßIPÐÅÏ¢");
+		printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IPï¿½ï¿½Ï¢");
 
-	//********°ÑÓòÃû×ª»»³ÉIP********
+	//********ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½IP********
 	if(i != strlen(dataSend))
 	{
 		char hostIP[256] = {0};
@@ -61,7 +62,7 @@ void ShowClientInfo(char *dataSend)//ÏÔÊ¾¿Í»§¶ËÐÅÏ¢
 				puts("Get IP address error!");
 			else
 				for(i=0; host->h_addr_list[i]; i++)
-					strcpy(hostIP,inet_ntoa( *(struct in_addr*)host->h_addr_list[i] ));//Ö»È¡×îºóÒ»¸öIP
+					strcpy(hostIP,inet_ntoa( *(struct in_addr*)host->h_addr_list[i] ));//Ö»È¡ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½IP
 
 			printf("IP addr %d: %s\n", i+1,hostIP);
 		}
@@ -70,17 +71,17 @@ void ShowClientInfo(char *dataSend)//ÏÔÊ¾¿Í»§¶ËÐÅÏ¢
 		///
 	}
 
-	//********×¥http°æ±¾ºÅ *********
+	//********×¥httpï¿½æ±¾ï¿½ï¿½ *********
 	char HttpVersion[10];
 	for(i=0; i<=strlen(dataSend); i++)
 	{
 		if(!strncmp(dataSend+i,"HTTP/",5))
-			strncpy(HttpVersion,dataSend+i,9);//HTTP/1.0»òÕßHTTP/1.1ÊÇ8¸ö×Ö·û£¬µ«ÊÇºóÃæ»¹ÓÐÒ»¸ö'\0'
+			strncpy(HttpVersion,dataSend+i,9);//HTTP/1.0ï¿½ï¿½ï¿½ï¿½HTTP/1.1ï¿½ï¿½8ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Çºï¿½ï¿½æ»¹ï¿½ï¿½Ò»ï¿½ï¿½'\0'
 	}
 
-	printf("HTTPµÄ°æ±¾ºÅÊÇ£º%s \n",HttpVersion);
+	printf("HTTPï¿½Ä°æ±¾ï¿½ï¿½ï¿½Ç£ï¿½%s \n",HttpVersion);
 
-	//********×¥ÏÔÊ¾ÓïÑÔ************
+	//********×¥ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½************
 	char Language[100];
 	for(i=0; i<strlen(dataSend); i++)
 	{
@@ -89,15 +90,15 @@ void ShowClientInfo(char *dataSend)//ÏÔÊ¾¿Í»§¶ËÐÅÏ¢
 			for(j=0,i=i+16; dataSend[i+1] != '\n'; i++,j++)
 				Language[j] =dataSend[i];
 			Language[j] ='\0';
-			printf("ÏÔÊ¾ÓïÑÔÊÇ£º%s \n",Language);
+			printf("ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½Ç£ï¿½%s \n",Language);
 			break;
 		}
 	}
 
 	if(i==strlen(dataSend))
-		printf("±¨ÎÄÖÐÃ»ÓÐÏÔÊ¾ÓïÑÔÐÅÏ¢");
+		printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢");
 
-	//********×¥²Ù×÷ÏµÍ³°æ±¾ºÅ	*********
+	//********×¥ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½æ±¾ï¿½ï¿½	*********
 	char version[1000];
 	for(i = 0 ; i<strlen(dataSend) ; i++)
 	{
@@ -105,23 +106,23 @@ void ShowClientInfo(char *dataSend)//ÏÔÊ¾¿Í»§¶ËÐÅÏ¢
 		{
 			for(j=0,i=i+6; dataSend[i+1] != '\n'; i++,j++)
 				version[j]=dataSend[i];
-			printf("²Ù×÷ÏµÍ³°æ±¾ÊÇ£º%s\n",version);
+			printf("ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½æ±¾ï¿½Ç£ï¿½%s\n",version);
 			break;
 		}
 	}
 	if(i==strlen(dataSend))
-		printf("±¨ÎÄÖÐÃ»ÓÐ²Ù×÷ÏµÍ³°æ±¾ÐÅÏ¢\n\n\n");
+		printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð²ï¿½ï¿½ï¿½ÏµÍ³ï¿½æ±¾ï¿½ï¿½Ï¢\n\n\n");
 }
 
-void ShowServerInfo(char *dataRecv)//ÏÔÊ¾·þÎñÆ÷¶ËÐÅÏ¢ 
+void ShowServerInfo(char *dataRecv)//ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ 
 {
 	//-------------------------------------------------
-	//--------------·ÖÎöÊÕÈ¡±¨ÎÄ¶ÎµÄÐÅÏ¢---------------
+	//--------------ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ä¶Îµï¿½ï¿½ï¿½Ï¢---------------
 	//-------------------------------------------------
 	
 	int i,j;
 	
-	//********×¥ÏÔÊ¾ÓïÑÔ************
+	//********×¥ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½************
 	char Language[100];
 	for(i=0; i<strlen(dataRecv); i++)
 	{
@@ -130,14 +131,14 @@ void ShowServerInfo(char *dataRecv)//ÏÔÊ¾·þÎñÆ÷¶ËÐÅÏ¢
 			for(j=0,i=i+16; dataRecv[i+1] != '\n'; i++,j++)
 				Language[j] =dataRecv[i];
 			Language[j] ='\0';
-			printf("ÏÔÊ¾ÓïÑÔÊÇ£º%s \n",Language);
+			printf("ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½Ç£ï¿½%s \n",Language);
 			break;
 		}
 	}
 		
 	if(i==strlen(dataRecv))
-		printf("·þÎñÆ÷ÏìÓ¦±¨ÎÄÖÐÃ»ÓÐÏÔÊ¾ÓïÑÔÐÅÏ¢\n");
-	//********×¥·þÎñÆ÷Èí¼þÐÅÏ¢°æ±¾ºÅ	*********
+		printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢\n");
+	//********×¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½æ±¾ï¿½ï¿½	*********
 
 	char versionServer[1000];
 	for(i=0; i<strlen(dataRecv); i++)
@@ -146,20 +147,20 @@ void ShowServerInfo(char *dataRecv)//ÏÔÊ¾·þÎñÆ÷¶ËÐÅÏ¢
 		{
 			for(j=0,i=i+7; dataRecv[i+1] != '\n'; i++,j++)
 				versionServer[j]=dataRecv[i];
-			printf("·þÎñÆ÷Èí¼þÐÅÏ¢°æ±¾ºÅÊÇ£º%s\n",versionServer);
+			printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½æ±¾ï¿½ï¿½ï¿½Ç£ï¿½%s\n",versionServer);
 			break;
 		}
 	}
 		
 	if(i==strlen(dataRecv))
-		printf("·þÎñÆ÷ÏìÓ¦±¨ÎÄÖÐÃ»ÓÐ·þÎñÆ÷Èí¼þÐÅÏ¢°æ±¾ºÅÐÅÏ¢\n");
+		printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½æ±¾ï¿½ï¿½ï¿½ï¿½Ï¢\n");
 		
 	printf("**************************************************\n\n");
 }
 
-void RecieveAndProcess(char *domin , SOCKET sSock)//½ÓÊÜÊý¾Ý£¬´¦ÀíÊý¾Ý£¬×ª·¢Êý¾Ý
+void RecieveAndProcess(char *domin , SOCKET sSock)//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
-	int err;//´íÎóÂë£¨ÎÞ´íÎóÊ±Îª0£©
+	int err;//ï¿½ï¿½ï¿½ï¿½ï¿½ë£¨ï¿½Þ´ï¿½ï¿½ï¿½Ê±Îª0ï¿½ï¿½
 
 	SOCKET clientSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 
@@ -167,27 +168,27 @@ void RecieveAndProcess(char *domin , SOCKET sSock)//½ÓÊÜÊý¾Ý£¬´¦ÀíÊý¾Ý£¬×ª·¢Êý¾Ý
 	memset(&clientAddr, 0, sizeof(clientAddr));
 	
 	clientAddr.sin_family = PF_INET;//IPv4
-	clientAddr.sin_addr.s_addr = inet_addr(ip);//ä¯ÀÀÆ÷ÇëÇóµÄÓòÃû
-	clientAddr.sin_port = htons(WEBPORT);//HTTP¶Ë¿Ú
+	clientAddr.sin_addr.s_addr = inet_addr(ip);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	clientAddr.sin_port = htons(WEBPORT);//HTTPï¿½Ë¿ï¿½
 
-	//Ñ­»·Á¬½ÓÖ±µ½³É¹¦ÎªÖ¹ 
+	//Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½ï¿½É¹ï¿½ÎªÖ¹ 
 	do
 	{
-		err = connect(clientSock , (struct sockaddr*)&clientAddr , sizeof(sockaddr));//ºÍ·þÎñÆ÷½¨Á¢Á¬½Ó
+		err = connect(clientSock , (struct sockaddr*)&clientAddr , sizeof(sockaddr));//ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if(err == SOCKET_ERROR)
 			printf("Connection fail. Error code: %s\n",WSAGetLastError());
 	}
 	while(err != 0);
 	
-	//½«ÇëÇó±¨ÎÄÖ±½Ó×ª·¢¸ø·þÎñÆ÷¶Ë(clientSock)
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(clientSock)
 	nByte = send(clientSock , localData , nByte , 0);
 	
-	//´Ó·þÎñÆ÷¶Ë½ÓÊÜ·µ»ØµÄ±¨ÎÄ
+	//ï¿½Ó·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë½ï¿½ï¿½Ü·ï¿½ï¿½ØµÄ±ï¿½ï¿½ï¿½
 	do
 	{
 		nByte = recv(clientSock , serverData , BUFFSIZE , 0);
 
-		//½«ÊÕµ½µÄÊý¾Ý×ª·¢¸øä¯ÀÀÆ÷¶Ë(serverSock) 
+		//ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(serverSock) 
 		if(nByte > 0)
 			send(sSock , serverData , nByte , 0);
 		else if(nByte == 0)
@@ -195,11 +196,11 @@ void RecieveAndProcess(char *domin , SOCKET sSock)//½ÓÊÜÊý¾Ý£¬´¦ÀíÊý¾Ý£¬×ª·¢Êý¾Ý
 		else
 			printf("Recieve error. Error code: %d\n" , WSAGetLastError() );
 		
-		memset(serverData , 0 , sizeof(serverData));//Çå¿Õ»º´æÇø 
+		memset(serverData , 0 , sizeof(serverData));//ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½ 
 	}
 	while(nByte > 0);
 
-	closesocket(clientSock);//¹Ø±Õsocket
+	closesocket(clientSock);//ï¿½Ø±ï¿½socket
 }
 
 int JudgeBlocklist()
@@ -210,7 +211,7 @@ int JudgeBlocklist()
 	int i , j;
 	int r = 0;
 
-	//½«ÎÄ¼þÄÚÈÝÐ´ÈëÈ«¾Ö±äÁ¿ÖÐ
+	//ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½È«ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½
 	for(i = 0 ; blacklist[i] != EOF ; i++)
 		blacklist[i] = fgetc(fp);
 		
@@ -240,60 +241,60 @@ int main(int argc , char *argv[])
 {
 	int err;
 	
-	//³õÊ¼»¯ DLL
+	//ï¿½ï¿½Ê¼ï¿½ï¿½ DLL
 	WSADATA wsaData;
 	WSAStartup( MAKEWORD(2, 2) , &wsaData);
 
-	//´´½¨ä¯ÀÀÆ÷¶Ësocket
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½socket
 	SOCKET serverSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);//IPv4,TCP
 
-	//°ó¶¨socketµ½±¾µØ¶Ë¿Ú
+	//ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½ï¿½ï¿½ï¿½Ø¶Ë¿ï¿½
 	struct sockaddr_in serverAddr;
 	memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = PF_INET;//IPv4
-	serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");//±¾µØip
-	serverAddr.sin_port = htons(PROXYPORT);//±¾µØ¶Ë¿Ú
+	serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");//ï¿½ï¿½ï¿½ï¿½ip
+	serverAddr.sin_port = htons(PROXYPORT);//ï¿½ï¿½ï¿½Ø¶Ë¿ï¿½
 	
-	bind(serverSock , (struct sockaddr*)&serverAddr , sizeof(serverAddr));//°ó¶¨
+	bind(serverSock , (struct sockaddr*)&serverAddr , sizeof(serverAddr));//ï¿½ï¿½ï¿½ï¿½
 	printf("Binding successful\n");
 	
-	//¿ªÊ¼¼àÌý±¾µØÇëÇó
+	//ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	listen(serverSock , 500);
 
-	//Ñ­»·µÈ´ý
+	//Ñ­ï¿½ï¿½ï¿½È´ï¿½
 	while(1)
 	{
-		//³õÊ¼»¯»º´æÇø
+		//ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		memset(localData , 0 , sizeof(localData));
 		memset(localData , 0 , sizeof(serverData));
 		
-		//´´½¨±¾µØ¶Ësocket
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¶ï¿½socket
 		SOCKADDR localAddr;
 		int addrLength = sizeof(SOCKADDR);
 		SOCKET localSock = accept(serverSock , (struct sockaddr*)&localAddr , &addrLength);
 
-		nByte = recv(localSock , localData , BUFFSIZE , 0);//½ÓÊÜÇëÇóÊý¾Ý
+		nByte = recv(localSock , localData , BUFFSIZE , 0);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		
-		ShowClientInfo(localData);//ÏÔÊ¾ä¯ÀÀÆ÷µÄÐÅÏ¢
+		ShowClientInfo(localData);//ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 		
-		//Èç¹ûÇëÇóÒ³ÃæÔÚºÚÃûµ¥ÄÚÔò·µ»Ø403Ò³Ãæ 
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½Úºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò·µ»ï¿½403Ò³ï¿½ï¿½ 
 		if(JudgeBlocklist())
 		{
 			printf("Request illegal !\n");
-			send(localSock , blockPage , 162 , 0);//·¢ËÍ403Ò³Ãæ	
+			send(localSock , blockPage , 162 , 0);//ï¿½ï¿½ï¿½ï¿½403Ò³ï¿½ï¿½	
 		}	
-		else if(nByte >= 0)//ÎÞ´íÎóÊ±Ö´ÐÐ´¦Àí²Ù×÷
+		else if(nByte >= 0)//ï¿½Þ´ï¿½ï¿½ï¿½Ê±Ö´ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
-			RecieveAndProcess(domin , localSock);//´¦Àí²¢×ª·¢Êý¾Ý
-			ShowServerInfo(serverData);//ÏÔÊ¾·þÎñÆ÷µÄÐÅÏ¢
+			RecieveAndProcess(domin , localSock);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			ShowServerInfo(serverData);//ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 		}
-		else//³ö´íÊ±´òÓ¡´íÎóÐÅÏ¢
+		else//ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 			printf("Recieving local request error.\nError code: %d \n" , WSAGetLastError() );
 		
-		closesocket(localSock);//¹Ø±Õ±¾µØ¶Ësocket
+		closesocket(localSock);//ï¿½Ø±Õ±ï¿½ï¿½Ø¶ï¿½socket
 	}
 
-	//ÖÕÖ¹Ê¹ÓÃDLL
+	//ï¿½ï¿½Ö¹Ê¹ï¿½ï¿½DLL
 	WSACleanup();
 
 	return 0;
